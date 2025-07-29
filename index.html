@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joshi Hospital - Pune | Book an Appointment</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f0f4f8; 
+            --primary-color: #005a9c; 
+            --secondary-color: #00a896;
+            --text-dark: #1e293b;
+            --text-light: #475569; 
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --placeholder-bg: #e2e8f0; /* slate-200 */
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .content-section {
+            padding: 100px 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .cta-button {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .cta-button:hover {
+            background-color: #008778;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 168, 150, 0.4);
+        }
+        
+        .image-placeholder {
+            background-color: var(--placeholder-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+        }
+        
+        #custom-modal {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 p-4">
+        <nav class="container mx-auto flex justify-between items-center glass-panel p-3">
+            <a href="#hero" class="text-2xl font-bold text-[var(--primary-color)]">Joshi Hospital</a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#about" class="text-gray-700 hover:text-[var(--primary-color)] transition-colors">About</a>
+                <a href="#departments" class="text-gray-700 hover:text-[var(--primary-color)] transition-colors">Departments</a>
+                <a href="#doctors" class="text-gray-700 hover:text-[var(--primary-color)] transition-colors">Doctors</a>
+                <a href="#contact" class="text-gray-700 hover:text-[var(--primary-color)] transition-colors">Contact</a>
+                <a href="#booking" class="cta-button text-sm">Book Appointment</a>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-[var(--primary-color)]">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden fixed inset-0 bg-white/95 z-50 flex flex-col items-center justify-center text-2xl space-y-8">
+        <button id="close-mobile-menu" class="absolute top-8 right-8 text-4xl">&times;</button>
+        <a href="#about" class="mobile-menu-link">About</a>
+        <a href="#departments" class="mobile-menu-link">Departments</a>
+        <a href="#doctors" class="mobile-menu-link">Doctors</a>
+        <a href="#booking" class="mobile-menu-link">Book Appointment</a>
+        <a href="#contact" class="mobile-menu-link">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="min-h-screen flex items-center content-section">
+        <div class="text-left max-w-3xl">
+            <h1 class="text-4xl md:text-6xl font-bold text-[var(--primary-color)] leading-tight">Compassionate Care, Advanced Medicine.</h1>
+            <p class="mt-4 text-lg md:text-xl text-[var(--text-light)]">नमस्ते! Welcome to Joshi Hospital, Pune. Your health is our priority. Schedule your appointment with our expert specialists today.</p>
+            <div class="mt-8">
+                <a href="#booking" class="cta-button text-lg">Book an Appointment Now</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Us Section -->
+    <section id="about" class="content-section">
+         <div class="flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2 w-full">
+                <div class="image-placeholder rounded-2xl shadow-2xl w-full h-80 md:h-full">
+                    <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                </div>
+            </div>
+            <div class="md:w-1/2">
+                <h2 class="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-4">About Joshi Hospital</h2>
+                <p class="text-[var(--text-light)] leading-relaxed">
+                    Founded with a mission to provide accessible, high-quality healthcare to the Pune community, Joshi Hospital has been a pillar of health and wellness for over two decades. We combine state-of-the-art medical technology with a patient-centric approach, ensuring that you and your loved ones receive the best possible care in a comfortable and supportive environment. Our team of dedicated professionals works tirelessly to uphold our values of integrity, compassion, and excellence.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Departments Section -->
+    <section id="departments" class="content-section">
+        <h2 class="section-title">Our Departments</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <!-- Department Card -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                <div class="w-16 h-16 mx-auto text-[var(--secondary-color)] bg-green-100 rounded-full flex items-center justify-center text-4xl font-bold">+</div>
+                <h3 class="font-bold mt-4 text-xl">Cardiology</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                <div class="w-16 h-16 mx-auto text-[var(--secondary-color)] bg-green-100 rounded-full flex items-center justify-center text-4xl font-bold">+</div>
+                <h3 class="font-bold mt-4 text-xl">Neurology</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                <div class="w-16 h-16 mx-auto text-[var(--secondary-color)] bg-green-100 rounded-full flex items-center justify-center text-4xl font-bold">+</div>
+                <h3 class="font-bold mt-4 text-xl">Pediatrics</h3>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+                 <div class="w-16 h-16 mx-auto text-[var(--secondary-color)] bg-green-100 rounded-full flex items-center justify-center text-4xl font-bold">+</div>
+                <h3 class="font-bold mt-4 text-xl">Orthopedics</h3>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Our Doctors Section -->
+    <section id="doctors" class="content-section">
+        <h2 class="section-title">Meet Our Specialists</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Doctor Card -->
+            <div class="bg-white rounded-2xl shadow-lg text-center overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                <div class="image-placeholder w-full h-64">
+                    <span class="text-5xl font-bold">M</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-xl">Dr. Mehta</h3>
+                    <p class="text-[var(--secondary-color)]">Cardiologist</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg text-center overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                <div class="image-placeholder w-full h-64">
+                    <span class="text-5xl font-bold">G</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-xl">Dr. Gupta</h3>
+                    <p class="text-[var(--secondary-color)]">Neurologist</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg text-center overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                <div class="image-placeholder w-full h-64">
+                     <span class="text-5xl font-bold">I</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-xl">Dr. Iyer</h3>
+                    <p class="text-[var(--secondary-color)]">Pediatrician</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg text-center overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                <div class="image-placeholder w-full h-64">
+                    <span class="text-5xl font-bold">P</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="font-bold text-xl">Dr. Patil</h3>
+                    <p class="text-[var(--secondary-color)]">Orthopedic Surgeon</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Appointment Booking Section -->
+    <section id="booking" class="content-section">
+        <h2 class="section-title">Book an Appointment</h2>
+        <div class="glass-panel p-6 md:p-8 max-w-4xl mx-auto">
+            <form id="appointment-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Step 1: Personal Details -->
+                <div class="md:col-span-2">
+                    <h3 class="text-xl font-semibold mb-4 text-[var(--primary-color)]">Step 1: Your Details</h3>
+                </div>
+                <div>
+                    <label for="patient-name" class="block font-medium mb-1">Full Name</label>
+                    <input type="text" id="patient-name" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[var(--secondary-color)] transition">
+                </div>
+                 <div>
+                    <label for="patient-phone" class="block font-medium mb-1">Phone Number</label>
+                    <input type="tel" id="patient-phone" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[var(--secondary-color)] transition">
+                </div>
+
+                <!-- Step 2: Appointment Details -->
+                <div class="md:col-span-2 mt-4">
+                    <h3 class="text-xl font-semibold mb-4 text-[var(--primary-color)]">Step 2: Choose Specialist & Date</h3>
+                </div>
+                <div>
+                    <label for="department-select" class="block font-medium mb-1">Department</label>
+                    <select id="department-select" required class="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-[var(--secondary-color)] transition">
+                        <option value="">Select Department</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Neurology">Neurology</option>
+                        <option value="Pediatrics">Pediatrics</option>
+                        <option value="Orthopedics">Orthopedics</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="doctor-select" class="block font-medium mb-1">Doctor</label>
+                    <select id="doctor-select" required class="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-[var(--secondary-color)] transition" disabled>
+                        <option value="">Select Department First</option>
+                    </select>
+                </div>
+                 <div class="md:col-span-2">
+                    <label for="appointment-date" class="block font-medium mb-1">Date</label>
+                    <input type="date" id="appointment-date" required class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-[var(--secondary-color)] transition" disabled>
+                </div>
+
+                <!-- Step 3: Time Slot -->
+                <div class="md:col-span-2 mt-4">
+                    <h3 class="text-xl font-semibold mb-4 text-[var(--primary-color)]">Step 3: Select Available Time</h3>
+                    <div id="time-slots-container" class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                        <p id="time-slot-placeholder" class="col-span-full text-gray-500">Please select a doctor and date to see available slots.</p>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 text-center mt-6">
+                    <button type="submit" id="submit-booking-btn" class="cta-button text-lg w-full md:w-auto">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="content-section">
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="glass-panel p-8 max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8 text-lg">
+                <div class="space-y-4">
+                    <h3 class="text-2xl font-bold text-[var(--primary-color)]">Joshi Hospital, Pune</h3>
+                    <p><strong>Address:</strong> 123 Health St, Shivaji Nagar, Pune, Maharashtra 411005</p>
+                    <p><strong>Phone:</strong> <a href="tel:+912012345678" class="hover:text-[var(--secondary-color)]">+91 20 1234 5678</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:contact@joshihospital.com" class="hover:text-[var(--secondary-color)]">contact@joshihospital.com</a></p>
+                </div>
+                <div>
+                     <div class="w-full h-64 md:h-full rounded-lg overflow-hidden shadow-lg">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d121059.04362142233!2d73.7921441029091!3d18.52454486333983!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67461101%3A0x828d43bf9d9ee343!2sPune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1678272590132!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-white mt-16">
+        <div class="content-section py-12">
+             <div class="text-center">
+                <p class="text-lg font-bold text-[var(--primary-color)]">Joshi Hospital</p>
+                <p class="text-[var(--text-light)]">&copy; 2024 Joshi Hospital. All Rights Reserved.</p>
+             </div>
+        </div>
+    </footer>
+
+
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-sm w-full text-center">
+            <h3 id="modal-title" class="text-2xl font-bold text-[var(--primary-color)] mb-4"></h3>
+            <p id="modal-message" class="text-[var(--text-light)] mb-6"></p>
+            <button id="modal-close-btn" class="cta-button">Close</button>
+        </div>
+    </div>
+
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, setDoc, doc, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+             apiKey: "YOUR_API_KEY", 
+             authDomain: "YOUR_AUTH_DOMAIN",
+             projectId: "YOUR_PROJECT_ID",
+             storageBucket: "YOUR_STORAGE_BUCKET",
+             messagingSenderId: "YOUR_SENDER_ID",
+             appId: "YOUR_APP_ID"
+        };
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'joshi-hospital-prod';
+
+        let app, db, auth;
+        try {
+            const config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
+            app = initializeApp(config);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            await signInAnonymously(auth);
+            console.log("Firebase Initialized and signed in anonymously.");
+        } catch(e) {
+            console.error("Firebase initialization failed. Using mock data. Error:", e);
+        }
+        
+        const doctors = {
+            "Cardiology": ["Dr. Mehta", "Dr. Rao"],
+            "Neurology": ["Dr. Gupta", "Dr. Shenoy"],
+            "Pediatrics": ["Dr. Iyer", "Dr. Khan"],
+            "Orthopedics": ["Dr. Patil", "Dr. Singh"]
+        };
+
+        const departmentSelect = document.getElementById('department-select');
+        const doctorSelect = document.getElementById('doctor-select');
+        const dateInput = document.getElementById('appointment-date');
+        const timeSlotsContainer = document.getElementById('time-slots-container');
+        const timeSlotPlaceholder = document.getElementById('time-slot-placeholder');
+        const form = document.getElementById('appointment-form');
+
+        departmentSelect.addEventListener('change', () => {
+            const selectedDept = departmentSelect.value;
+            doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
+            doctorSelect.disabled = true;
+            dateInput.disabled = true;
+            dateInput.value = '';
+            resetTimeSlots();
+
+            if (selectedDept && doctors[selectedDept]) {
+                doctors[selectedDept].forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor;
+                    option.textContent = doctor;
+                    doctorSelect.appendChild(option);
+                });
+                doctorSelect.disabled = false;
+            }
+        });
+        
+        doctorSelect.addEventListener('change', () => {
+             dateInput.disabled = !doctorSelect.value;
+             dateInput.value = '';
+             resetTimeSlots();
+        });
+
+        const today = new Date();
+        today.setDate(today.getDate() + 1); // Start from tomorrow
+        dateInput.setAttribute('min', today.toISOString().split('T')[0]);
+        dateInput.addEventListener('change', updateAvailableTimeSlots);
+
+        let unsubscribeFromAppointments;
+        function updateAvailableTimeSlots() {
+            const selectedDoctor = doctorSelect.value;
+            const selectedDate = dateInput.value;
+            if (unsubscribeFromAppointments) unsubscribeFromAppointments();
+            if (!selectedDoctor || !selectedDate || !db) { resetTimeSlots(); return; }
+
+            const appointmentsRef = collection(db, `artifacts/${appId}/public/data/appointments`);
+            const q = query(appointmentsRef, where("doctor", "==", selectedDoctor), where("date", "==", selectedDate));
+            timeSlotsContainer.innerHTML = '<p class="col-span-full animate-pulse">Loading slots...</p>';
+            unsubscribeFromAppointments = onSnapshot(q, (snapshot) => {
+                const bookedSlots = snapshot.docs.map(doc => doc.data().time);
+                generateTimeSlots(bookedSlots);
+            }, (error) => {
+                console.error("Error fetching appointments: ", error);
+                showModal("Error", "Could not fetch available time slots.");
+                timeSlotsContainer.innerHTML = '<p class="col-span-full text-red-500">Error loading slots.</p>';
+            });
+        }
+        
+        function generateTimeSlots(bookedSlots = []) {
+            timeSlotsContainer.innerHTML = '';
+            const allSlots = ["09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM"];
+            
+            const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
+
+            if(availableSlots.length === 0){
+                 timeSlotsContainer.innerHTML = '<p class="col-span-full text-center text-gray-600">No slots available for this day. Please select another date.</p>';
+                 return;
+            }
+
+            availableSlots.forEach(slot => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.dataset.time = slot;
+                button.textContent = slot;
+                button.className = 'p-2 rounded-md border text-sm bg-green-100 text-green-800 hover:bg-green-200 transition-colors';
+                button.addEventListener('click', selectTimeSlot);
+                timeSlotsContainer.appendChild(button);
+            });
+        }
+        
+        let selectedTimeSlot = null;
+        function selectTimeSlot(event){
+            document.querySelectorAll('#time-slots-container button').forEach(btn => {
+                btn.classList.remove('bg-[var(--secondary-color)]', 'text-white', 'ring-2', 'ring-offset-2', 'ring-[var(--secondary-color)]');
+            });
+            event.target.classList.add('bg-[var(--secondary-color)]', 'text-white', 'ring-2', 'ring-offset-2', 'ring-[var(--secondary-color)]');
+            selectedTimeSlot = event.target.dataset.time;
+        }
+
+        function resetTimeSlots() {
+            timeSlotsContainer.innerHTML = '';
+            timeSlotsContainer.appendChild(timeSlotPlaceholder.cloneNode(true));
+            selectedTimeSlot = null;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!db){ showModal("Booking Failed", "System is offline."); return; }
+            if (!form.checkValidity() || !selectedTimeSlot) {
+                showModal("Incomplete Form", "Please fill out all fields and select a time slot.");
+                return;
+            }
+            
+            const submitButton = document.getElementById('submit-booking-btn');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Booking...';
+
+            const patientName = document.getElementById('patient-name').value;
+            const patientPhone = document.getElementById('patient-phone').value;
+            const department = departmentSelect.value;
+            const doctor = doctorSelect.value;
+            const date = dateInput.value;
+            const appointmentId = `${date}-${doctor.replace(/\s+/g, '-')}-${selectedTimeSlot.replace(':', '')}`.toLowerCase();
+            const appointmentData = { patientName, patientPhone, department, doctor, date, time: selectedTimeSlot, bookedAt: new Date().toISOString() };
+
+            try {
+                const docRef = doc(db, `artifacts/${appId}/public/data/appointments`, appointmentId);
+                await setDoc(docRef, appointmentData);
+                showModal("Booking Confirmed!", `Your appointment with ${doctor} on ${date} at ${selectedTimeSlot} is confirmed. We will contact you shortly.`);
+                form.reset();
+                resetTimeSlots();
+                doctorSelect.innerHTML = '<option value="">Select Department First</option>';
+                doctorSelect.disabled = true;
+                dateInput.disabled = true;
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showModal("Booking Failed", "This time slot may have just been booked. Please select a different slot.");
+                updateAvailableTimeSlots();
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Confirm Booking';
+            }
+        });
+
+        const modal = document.getElementById('custom-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        function showModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modal.classList.remove('hidden');
+        }
+        modalCloseBtn.addEventListener('click', () => modal.classList.add('hidden'));
+
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+        mobileMenuButton.addEventListener('click', () => mobileMenu.classList.remove('hidden'));
+        closeMobileMenuButton.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+    </script>
+
+    <!-- 3D Background Script -->
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('bg-canvas'),
+            alpha: true,
+            antialias: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        directionalLight.position.set(5, 10, 7);
+        scene.add(directionalLight);
+
+        const group = new THREE.Group();
+        scene.add(group);
+        
+        const geometries = [
+            new THREE.TorusKnotGeometry(0.5, 0.2, 100, 16),
+            new THREE.IcosahedronGeometry(0.8)
+        ];
+
+        const material1 = new THREE.MeshStandardMaterial({ color: 0x005a9c, roughness: 0.4 });
+        const material2 = new THREE.MeshStandardMaterial({ color: 0x00a896, roughness: 0.4, wireframe: true });
+
+        for(let i=0; i<40; i++) {
+            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+            const material = Math.random() > 0.5 ? material1 : material2;
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set((Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30, (Math.random() - 0.5) * 30);
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+            const scale = Math.random() * 0.5 + 0.5;
+            mesh.scale.set(scale, scale, scale);
+            group.add(mesh);
+        }
+
+        camera.position.z = 15;
+
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+            group.rotation.y = elapsedTime * 0.05;
+            group.rotation.x = elapsedTime * 0.03;
+            camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
+            camera.position.y += (mouseY * 2 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
